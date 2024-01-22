@@ -1,5 +1,5 @@
 "use client";
-import { GlobalStyles } from "../src/ui/theme/GlobalStyles";
+import { GlobalStyles } from "@ui/theme/GlobalStyles";
 
 const bg = "https://mariosouto.com/cursos/crudcomqualidade/bg";
 //const bg = "/bg.jpeg"; // inside public folder
