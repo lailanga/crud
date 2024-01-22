@@ -1,1 +1,22 @@
-Hoje é domingo
+{
+  "todos": [
+    {
+      "id": "99cdced2-a76f-4300-abff-90373b6a6cf9",
+      "date": "2024-01-22T02:17:57.585Z",
+      "content": "Primeira TODO",
+      "done": false
+    },
+    {
+      "id": "28cfe3b0-b051-4ecb-aba1-2b55600f7bf4",
+      "date": "2024-01-22T02:17:57.588Z",
+      "content": "Segunda TODO",
+      "done": false
+    },
+    {
+      "id": "8712895e-7cf1-408b-ac21-03ebc5441653",
+      "date": "2024-01-22T02:17:57.589Z",
+      "content": "Atualizada Terceira",
+      "done": false
+    }
+  ]
+}
