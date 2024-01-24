@@ -13,31 +13,21 @@ interface HomeTodo {
 }
 
 export default function Page() {
-  const [initialLoadComplete, setInitialLoadComplete] = React.useState(false);
+  //const [initialLoadComplete, setInitialLoadComplete] = React.useState(false);
+  const initialLoadComplete = React.useRef(false);
   const [totalPages, setTotalPages] = React.useState(0);
   const [page, setPage] =   React.useState(1);
   const [search, setSearch] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const [todos, setTodos] = React.useState<HomeTodo[]>([]);
   const homeTodos = todoController.filterTodosByContent<HomeTodo>(search, todos);
-  
   const hasMorePages = totalPages > page;
   const hasNoTodos = homeTodos.length === 0 && !isLoading;
 
-
-
   // Load infos onload
   React.useEffect(() => {
-   // console.log(page);
-    //todoController.get({ page }).then(({ todos, pages }) => {
-      //setTodos((oldTodos) => {
-       // return [...oldTodos, ...todos]
-      //});
-     // setTotalPages(pages);
-    //});
- // }, [page]);
-  setInitialLoadComplete(true);
-    if (!initialLoadComplete) {
+  //setInitialLoadComplete(true);
+    if (!initialLoadComplete.current) {
       todoController
         .get({ page })
         .then(({ todos, pages }) => {
@@ -46,6 +36,7 @@ export default function Page() {
         })
         .finally(() => {
           setIsLoading(false);
+          initialLoadComplete.current = true;
         });
     }
   }, []);
