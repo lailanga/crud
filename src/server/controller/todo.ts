@@ -1,7 +1,8 @@
+import { z as schema } from "zod";
 import { todoRepository } from "@server/repository/todo";
 
 
-function get(req: Request) {
+async function get(req: Request) {
 
     console.log(req.method);
 
@@ -40,7 +41,7 @@ function get(req: Request) {
     }
 
     try {
-        const output = todoRepository.get({page, limit});
+        const output = await todoRepository.get({page, limit});
 
         return new Response(
             JSON.stringify({
@@ -67,6 +68,57 @@ function get(req: Request) {
     
 };
 
+const TodoCreateBodySchema = schema.object({
+    content: schema.string(),
+});
+
+async function create(req: Request) {
+    console.log(req.method);
+
+    // Fail Fast Validations
+    //const body = TodoCreateBodySchema.safeParse(req.body);
+    const body = TodoCreateBodySchema.safeParse(await req.json());
+    
+    if(!body.success) {
+        return new Response(
+            JSON.stringify({
+              error: {
+                message: "You need to provide a content to create a TODO",
+                description: body.error.issues,
+              },
+            }),
+            {
+              status: 400,
+            }
+        );
+    }
+    // Here we have the data!
+    try {
+        const createdTodo = await todoRepository.createByContent(body.data.content);
+    
+        return new Response(
+            JSON.stringify({
+              todo: createdTodo,
+            }),
+            {
+              status: 201,
+            }
+          );
+    } catch {
+        return new Response(
+            JSON.stringify({
+              error: {
+                message: "Failed to create todo",
+              },
+            }),
+            {
+              status: 400,
+            }
+          );
+    }
+};
+
 export const todoController = {
     get,
+    create,
 };
