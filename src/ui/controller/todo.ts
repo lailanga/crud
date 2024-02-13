@@ -1,3 +1,4 @@
+import { z as schema } from "zod";
 import { todoRepository } from "@ui/repository/todo";
 import { Todo } from "@ui/schema/todo";
 
@@ -29,19 +30,15 @@ interface TodoControllerCreateParams {
 function create({ content, onSuccess, onError }: TodoControllerCreateParams) {
     //console.log("TodoControllerCreateParams ", content);
     // Fail Fast
-    if(!content) {
+
+    const parsedParams = schema.string().nonempty().safeParse(content);
+
+    if(!parsedParams.success) {
         onError();
         return;
     }
 
-    //const todo = {
-    //    id: "125",
-    //    content,
-    //    date: new Date().toISOString(),
-    //    done: false,
-    //};
-
-    todoRepository.createByContent(content).then((newTodo) => {
+    todoRepository.createByContent(parsedParams.data).then((newTodo) => {
         onSuccess(newTodo);
     }).catch(() => {
         onError();
