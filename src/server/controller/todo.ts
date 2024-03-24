@@ -118,7 +118,51 @@ async function create(req: Request) {
     }
 };
 
+async function toggleDone(req: Request, id: string) {
+  const todoId = id;
+
+   // Fail Fast Validation
+   if (!todoId || typeof todoId !== "string") {
+    return new Response(
+      JSON.stringify({
+        error: {
+          message: "You must to provide a string ID",
+        },
+      }),
+      {
+        status: 400,
+      }
+    );
+  }
+
+  try {
+    const updatedTodo = await todoRepository.toggleDone(todoId);
+    return new Response(
+      JSON.stringify({
+        todo: updatedTodo,
+      }),
+      {
+        status: 200,
+      }
+    );
+  }  catch (err) {
+    if (err instanceof Error) {
+      return new Response(
+        JSON.stringify({
+          error: {
+            message: err.message,
+          },
+        }),
+        {
+          status: 404,
+        }
+      );
+    }
+  }
+};
+
 export const todoController = {
-    get,
-    create,
+  get,
+  create,
+  toggleDone,
 };
