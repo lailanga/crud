@@ -1,31 +1,37 @@
 import { z as schema } from "zod";
 import { Todo, TodoSchema } from "@ui/schema/todo";
 
-
 interface TodoRepositoryGetParams {
     page: number;
     limit: number;
-};
+}
 interface TodoRepositoryGetOutput {
     todos: Todo[];
     total: number;
     pages: number;
-};
+}
 
-function get({ page, limit }: TodoRepositoryGetParams): Promise<TodoRepositoryGetOutput> {
-    return fetch(`/api/todos?page=${page}&limit=${limit}`).then(async (respostaDoServidor) => {
-        const todosString = await respostaDoServidor.text();
+function get({
+    page,
+    limit,
+}: TodoRepositoryGetParams): Promise<TodoRepositoryGetOutput> {
+    return fetch(`/api/todos?page=${page}&limit=${limit}`).then(
+        async (respostaDoServidor) => {
+            const todosString = await respostaDoServidor.text();
 
-        //const todosFromServer = JSON.parse(todosString).todos;
-        const responseParsed = parseTodosFromServer(JSON.parse(todosString));
+            //const todosFromServer = JSON.parse(todosString).todos;
+            const responseParsed = parseTodosFromServer(
+                JSON.parse(todosString)
+            );
 
-        return {
-            todos: responseParsed.todos,
-            total:responseParsed.total,
-            pages: responseParsed.pages,
-        };
-    });
-};
+            return {
+                todos: responseParsed.todos,
+                total: responseParsed.total,
+                pages: responseParsed.pages,
+            };
+        }
+    );
+}
 
 async function createByContent(content: string): Promise<Todo> {
     const response = await fetch("/api/todos", {
@@ -39,14 +45,15 @@ async function createByContent(content: string): Promise<Todo> {
         }),
     });
 
-    if(response.ok) {
+    if (response.ok) {
         const serverResponse = await response.json();
         // { todo: Todo }
         const ServerResponseSchema = schema.object({
-            todo: TodoSchema
+            todo: TodoSchema,
         });
-        const serverResponseParsed = ServerResponseSchema.safeParse(serverResponse);
-        if(!serverResponseParsed.success) {
+        const serverResponseParsed =
+            ServerResponseSchema.safeParse(serverResponse);
+        if (!serverResponseParsed.success) {
             throw new Error("Failed to create TODO :( ");
         }
         const todo = serverResponseParsed.data.todo;
@@ -54,36 +61,37 @@ async function createByContent(content: string): Promise<Todo> {
     }
 
     throw new Error("Failed to create TODO :( ");
-};
+}
 
 async function toggleDone(todoId: string): Promise<Todo> {
     const response = await fetch(`/api/todos/${todoId}/toggle-done`, {
         method: "PUT",
-      });
-    
-      if (response.ok) {
+    });
+
+    if (response.ok) {
         const serverResponse = await response.json();
         const ServerResponseSchema = schema.object({
-          todo: TodoSchema,
+            todo: TodoSchema,
         });
-        const serverResponseParsed = ServerResponseSchema.safeParse(serverResponse);
+        const serverResponseParsed =
+            ServerResponseSchema.safeParse(serverResponse);
         if (!serverResponseParsed.success) {
-          throw new Error(`Failed to update TODO with id ${todoId}`);
+            throw new Error(`Failed to update TODO with id ${todoId}`);
         }
         const updatedTodo = serverResponseParsed.data.todo;
         return updatedTodo;
-      }
-    
-      throw new Error("Server Error");
-};
+    }
+
+    throw new Error("Server Error");
+}
 
 async function deleteById(id: string) {
     const response = await fetch(`/api/todos/${id}`, {
-      method: "DELETE",
+        method: "DELETE",
     });
-  
+
     if (!response.ok) {
-      throw new Error("Failed to delete");
+        throw new Error("Failed to delete");
     }
 }
 
@@ -102,23 +110,24 @@ export const todoRepository = {
 //    done: boolean;
 //};
 
-function parseTodosFromServer(responseBody: unknown): { 
+function parseTodosFromServer(responseBody: unknown): {
     total: number;
     pages: number;
-    todos : Array<Todo>;
+    todos: Array<Todo>;
 } {
-    if(responseBody !== null && 
-        typeof responseBody === "object" && 
-        "todos" in responseBody && 
+    if (
+        responseBody !== null &&
+        typeof responseBody === "object" &&
+        "todos" in responseBody &&
         "total" in responseBody &&
         "pages" in responseBody &&
-        Array.isArray(responseBody.todos) ) {
-
+        Array.isArray(responseBody.todos)
+    ) {
         return {
             total: Number(responseBody.total),
             pages: Number(responseBody.pages),
             todos: responseBody.todos.map((todo: unknown) => {
-                if(todo === null && typeof todo !== "object") {
+                if (todo === null && typeof todo !== "object") {
                     throw new Error("Invalid todo from API");
                 }
 
@@ -136,9 +145,9 @@ function parseTodosFromServer(responseBody: unknown): {
                     done: String(done).toLocaleLowerCase() === "true",
                 };
             }),
-        }
+        };
     }
-    
+
     return {
         pages: 1,
         total: 0,

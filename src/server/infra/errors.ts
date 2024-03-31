@@ -5,5 +5,5 @@ export class HttpNotFoundError extends Error {
         super();
         this.message = message;
         this.status = 404;
-  }
+    }
 }

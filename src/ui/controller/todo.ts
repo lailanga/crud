@@ -11,16 +11,19 @@ async function get(params: TodoControllerGetParams) {
         page: params.page,
         limit: 10,
     });
-};
+}
 
-function filterTodosByContent<Todo>(search: string, todos: Array<Todo & {content: string}>): Array<Todo> {
+function filterTodosByContent<Todo>(
+    search: string,
+    todos: Array<Todo & { content: string }>
+): Array<Todo> {
     const homeTodos = todos.filter((todo) => {
         const searchNormalized = search.toLocaleLowerCase();
         const contentNormalized = todo.content.toLocaleLowerCase();
         return contentNormalized.includes(searchNormalized);
     });
     return homeTodos;
-};
+}
 
 interface TodoControllerCreateParams {
     content?: string;
@@ -33,18 +36,20 @@ function create({ content, onSuccess, onError }: TodoControllerCreateParams) {
 
     const parsedParams = schema.string().nonempty().safeParse(content);
 
-    if(!parsedParams.success) {
+    if (!parsedParams.success) {
         onError();
         return;
     }
 
-    todoRepository.createByContent(parsedParams.data).then((newTodo) => {
-        onSuccess(newTodo);
-    }).catch(() => {
-        onError();
-    });
-    
-};
+    todoRepository
+        .createByContent(parsedParams.data)
+        .then((newTodo) => {
+            onSuccess(newTodo);
+        })
+        .catch(() => {
+            onError();
+        });
+}
 
 interface TodoControllerToggleDoneParams {
     id: string;
@@ -59,22 +64,22 @@ function toggleDone({
 }: TodoControllerToggleDoneParams) {
     // Optmistic Update
     // updateTodoOnScreen();
-  
+
     todoRepository
-      .toggleDone(id)
-      .then(() => {
-        // Update Real
-        updateTodoOnScreen();
-      })
-      .catch(() => {
-        onError();
-    });
+        .toggleDone(id)
+        .then(() => {
+            // Update Real
+            updateTodoOnScreen();
+        })
+        .catch(() => {
+            onError();
+        });
 }
 
 async function deleteById(id: string): Promise<void> {
     const todoId = id;
     await todoRepository.deleteById(todoId);
-  }
+}
 
 export const todoController = {
     get,

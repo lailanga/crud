@@ -6,19 +6,18 @@ export async function GET(
 ) {
     const id = params.id;
     return new Response(`Eu sou o ID: ${id}`, {
-      status: 200,
+        status: 200,
     });
 }
-  
+
 export async function DELETE(
     request: Request,
     { params }: { params: { id: string } }
 ) {
     return todoController.deleteById(request, params.id);
 }
-  
 
-  /*
+/*
   export async function GET(request: Request) {
     console.log(request.headers);
     console.log("Toggle done");
@@ -27,4 +26,3 @@ export async function DELETE(
     });
 }
   */
- 
