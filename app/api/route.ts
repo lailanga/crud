@@ -1,10 +1,11 @@
 export async function GET(request: Request) {
     // eslint-disable-next-line no-console
     console.log(request.headers);
-    return new Response(JSON.stringify({ message: "Ola mundo!" }), {
+    return new Response(JSON.stringify({ message: `Ola Mundo!` }), {
         status: 200,
     });
 }
+//ror: Insert `␍`  prettier/prettier
 
 /*
 import { NextApiRequest, NextApiResponse } from "next";
