@@ -152,6 +152,21 @@ export default function Page() {
                          <td align="right">
                            <button
                              data-type="delete"
+                             onClick={function handleClick() {
+                              todoController
+                                .deleteById(todo.id)
+                                .then(() => {
+                                  setTodos((currentTodos) => {
+                                    return currentTodos.filter((currentTodo) => {
+                                      if (currentTodo.id === todo.id) return false;
+                                      return true;
+                                    });
+                                  });
+                                })
+                                .catch(() => {
+                                  console.error("Failed to delete");
+                                });
+                             }}
                            >
                              Apagar
                            </button>
