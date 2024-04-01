@@ -28,5 +28,8 @@ parserOptions: {
         //"no-only-tests/no-only-tests": "error",
         "no-console": ["error", { allow: ["warn", "error"] }],
         "react/no-unknown-property": ["error", { ignore: ["jsx", "global"] }],
+        "prettier/prettier": ["error", {
+            "endOfLine":"auto"
+        }],
     },
   };
